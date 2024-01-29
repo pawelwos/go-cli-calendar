@@ -72,7 +72,7 @@ func main() {
 				rowCells = append(rowCells, &simpletable.Cell{Align: simpletable.AlignCenter, Text: ""})
 			} else {
 				var text string
-				if today.Day() == counter {
+				if today.Day() == counter && *year == today.Year() && *month == int(today.Month()) {
 					text = blue(fmt.Sprint(counter))
 				} else {
 					text = fmt.Sprint(counter)
