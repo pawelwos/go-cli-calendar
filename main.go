@@ -15,28 +15,15 @@ func main() {
 
 	flag.Parse()
 
-	// if no year and month provided get current date
+	date := time.Date(*year, time.Month(*month), 1, 0, 0, 0, 0, time.Local)
 	totalDays := daysInMonth(year, month)
-	date := time.Date(*year, time.Month(*month), 1, 0, 0, 0, 0, time.UTC)
 	startDay := int(date.Weekday())
+
 	rows := int(math.Ceil(float64(totalDays) / 7))
 	cols := 7
 
-	// Create a 2D slice to represent the table
 	table := make([][]int, rows)
 	counter := 1
-
-	for i := 0; i < rows; i++ {
-		table[i] = make([]int, cols)
-		for j := 0; j < cols; j++ {
-			table[i][j] = counter
-			counter++
-		}
-	}
-
-	fmt.Println(int(startDay))
-
-	fmt.Printf("%v-%v\n", *year, *month)
 
 	head := [...]string{
 		"Po",
@@ -48,6 +35,24 @@ func main() {
 		"Ni",
 	}
 
+	for i := 0; i < rows; i++ {
+		table[i] = make([]int, cols)
+		for j := 0; j < cols; j++ {
+			if j < startDay-1 && i == 0 {
+				table[i][j] = 0
+			} else if counter > totalDays {
+				table[i][j] = 0
+			} else {
+				table[i][j] = counter
+				counter++
+			}
+		}
+	}
+
+	fmt.Println(int(startDay))
+
+	fmt.Printf("%v-%v\n", *year, *month)
+
 	// table := simpletable.New()
 
 	// table.Header = &simpletable.Header{}
@@ -57,7 +62,7 @@ func main() {
 		fmt.Printf("%s ", row)
 		// table.Header.Cells = append(table.Header.Cells, cell...)
 	}
-
+	fmt.Println("")
 	// Print the table
 	for i := 0; i < rows; i++ {
 		fmt.Println(table[i])
