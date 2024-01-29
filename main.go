@@ -88,6 +88,10 @@ func main() {
 
 	fmt.Println("")
 
+	fmt.Printf("Current date is: %v / %s / %v", today.Day(), today.Month(), today.Year())
+
+	fmt.Println("")
+
 	fmt.Printf("Showing calendar for date: %v / %v\n", date.Month(), date.Year())
 
 	fmt.Println("")
