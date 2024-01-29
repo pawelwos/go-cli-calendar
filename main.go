@@ -10,6 +10,11 @@ import (
 	"github.com/alexeyco/simpletable"
 )
 
+const (
+	ColorDefault = "\x1b[39m"
+	ColorBlue    = "\x1b[94m"
+)
+
 func main() {
 	year := flag.Int("year", 0, "Enter year")
 	month := flag.Int("month", 0, "Enter month")
@@ -24,13 +29,14 @@ func main() {
 		*month = int(time.Now().Month())
 	}
 
-	totalDays := daysInMonth(year, month)
-
-	date := time.Date(*year, 1, 1, 0, 0, 0, 0, time.UTC)
+	date := time.Date(*year, time.Month(*month), 1, 0, 0, 0, 0, time.UTC)
+	today := time.Now()
 
 	startDay := int(date.Weekday())
+	totalDays := daysInMonth(year, month)
 
-	rows := int(math.Ceil(float64(totalDays) / 7))
+	rows := int(math.Ceil(float64(totalDays+startDay) / 7))
+
 	cols := 7
 
 	counter := 1
@@ -60,25 +66,36 @@ func main() {
 	for i := 0; i < rows; i++ {
 		var rowCells []*simpletable.Cell // Initialize a new slice for each row
 		for j := 0; j < cols; j++ {
-			if j < startDay && i < 1 {
+			if j < startDay-1 && i < 1 {
 				rowCells = append(rowCells, &simpletable.Cell{Align: simpletable.AlignCenter, Text: ""})
 			} else if counter > totalDays {
 				rowCells = append(rowCells, &simpletable.Cell{Align: simpletable.AlignCenter, Text: ""})
 			} else {
-				rowCells = append(rowCells, &simpletable.Cell{Align: simpletable.AlignCenter, Text: fmt.Sprint(counter)})
+				var text string
+				if today.Day() == counter {
+					text = blue(fmt.Sprint(counter))
+				} else {
+					text = fmt.Sprint(counter)
+				}
+				rowCells = append(rowCells, &simpletable.Cell{Align: simpletable.AlignCenter, Text: text})
 				counter++
 			}
 		}
 		r = append(r, rowCells) // Append the row to the outer slice
-
-		table.Body.Cells = append(table.Body.Cells, rowCells...)
 	}
+
+	table.Body.Cells = append(table.Body.Cells, r...)
+
+	fmt.Println("")
 
 	fmt.Printf("Showing calendar for date: %v / %v\n", date.Month(), date.Year())
 
 	fmt.Println("")
 
 	fmt.Println(table.String())
+
+	fmt.Println("")
+
 }
 
 func daysInMonth(y *int, m *int) int {
@@ -97,4 +114,8 @@ func daysInMonth(y *int, m *int) int {
 	}
 	daysInMonth := [...]int{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
 	return daysInMonth[*m-1]
+}
+
+func blue(s string) string {
+	return fmt.Sprintf("%s%s%s", ColorBlue, s, ColorDefault)
 }
