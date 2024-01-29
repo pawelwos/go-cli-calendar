@@ -6,23 +6,33 @@ import (
 	"math"
 	"strconv"
 	"time"
+
+	"github.com/alexeyco/simpletable"
 )
 
 func main() {
-	fmt.Println("Init")
 	year := flag.Int("year", 0, "Enter year")
 	month := flag.Int("month", 0, "Enter month")
 
 	flag.Parse()
 
-	date := time.Date(*year, time.Month(*month), 1, 0, 0, 0, 0, time.Local)
+	if *year == 0 {
+		*year = time.Now().Year()
+	}
+
+	if *month == 0 {
+		*month = int(time.Now().Month())
+	}
+
 	totalDays := daysInMonth(year, month)
+
+	date := time.Date(*year, 1, 1, 0, 0, 0, 0, time.UTC)
+
 	startDay := int(date.Weekday())
 
 	rows := int(math.Ceil(float64(totalDays) / 7))
 	cols := 7
 
-	table := make([][]int, rows)
 	counter := 1
 
 	head := [...]string{
@@ -35,58 +45,42 @@ func main() {
 		"Ni",
 	}
 
+	table := simpletable.New()
+
+	table.Header = &simpletable.Header{}
+
+	for _, row := range head {
+		cell := []*simpletable.Cell{{Align: simpletable.AlignCenter, Text: row}}
+		// fmt.Printf("%s ", row)
+		table.Header.Cells = append(table.Header.Cells, cell...)
+	}
+
+	var r [][]*simpletable.Cell
+
 	for i := 0; i < rows; i++ {
-		table[i] = make([]int, cols)
 		for j := 0; j < cols; j++ {
-			if j < startDay-1 && i == 0 {
-				table[i][j] = 0
+			if j < startDay && i < 1 {
+				r[i] = []*simpletable.Cell{{Align: simpletable.AlignCenter, Text: ""}}
 			} else if counter > totalDays {
-				table[i][j] = 0
+				r[i] = []*simpletable.Cell{{Align: simpletable.AlignCenter, Text: ""}}
 			} else {
-				table[i][j] = counter
+				r[i] = []*simpletable.Cell{{Align: simpletable.AlignCenter, Text: fmt.Sprint(counter)}}
 				counter++
 			}
 		}
+		fmt.Printf("%q\n", r)
+		//table.Body.Cells = append(table.Body.Cells, r...)
 	}
 
-	fmt.Println(int(startDay))
+	fmt.Printf("Showing calendar for date: %v / %v\n", date.Month(), date.Year())
 
-	fmt.Printf("%v-%v\n", *year, *month)
-
-	// table := simpletable.New()
-
-	// table.Header = &simpletable.Header{}
-
-	for _, row := range head {
-		// cell := []*simpletable.Cell{{Align: simpletable.AlignCenter, Text: row}}
-		fmt.Printf("%s ", row)
-		// table.Header.Cells = append(table.Header.Cells, cell...)
-	}
 	fmt.Println("")
-	// Print the table
-	for i := 0; i < rows; i++ {
-		fmt.Println(table[i])
-	}
 
-	// day := 1
-	// fmt.Println(totalDays / 7)
-	// for c < totalDays {
-	// 	for day <= 7 {
-
-	// 		//r := []*simpletable.Cell{{Align: simpletable.AlignCenter, Text: fmt.Sprint(day)}}
-	// 		if day >= startDay {
-	// 			fmt.Printf("%v ", day)
-	// 		}
-	// 		//table.Body.Cells = append(table.Body.Cells, r)
-	// 		day++
-	// 	}
-	// }
-
-	//fmt.Println(table.String())
-	//fmt.Println(table.String())
+	fmt.Println(table.String())
 }
 
-func daysInMonth(m *int, y *int) int {
+func daysInMonth(y *int, m *int) int {
+
 	if *m < 1 || *m > 12 {
 		*m = int(time.Now().Month())
 	}
