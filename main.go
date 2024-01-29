@@ -58,18 +58,20 @@ func main() {
 	var r [][]*simpletable.Cell
 
 	for i := 0; i < rows; i++ {
+		var rowCells []*simpletable.Cell // Initialize a new slice for each row
 		for j := 0; j < cols; j++ {
 			if j < startDay && i < 1 {
-				r[i] = []*simpletable.Cell{{Align: simpletable.AlignCenter, Text: ""}}
+				rowCells = append(rowCells, &simpletable.Cell{Align: simpletable.AlignCenter, Text: ""})
 			} else if counter > totalDays {
-				r[i] = []*simpletable.Cell{{Align: simpletable.AlignCenter, Text: ""}}
+				rowCells = append(rowCells, &simpletable.Cell{Align: simpletable.AlignCenter, Text: ""})
 			} else {
-				r[i] = []*simpletable.Cell{{Align: simpletable.AlignCenter, Text: fmt.Sprint(counter)}}
+				rowCells = append(rowCells, &simpletable.Cell{Align: simpletable.AlignCenter, Text: fmt.Sprint(counter)})
 				counter++
 			}
 		}
-		fmt.Printf("%q\n", r)
-		//table.Body.Cells = append(table.Body.Cells, r...)
+		r = append(r, rowCells) // Append the row to the outer slice
+
+		table.Body.Cells = append(table.Body.Cells, rowCells...)
 	}
 
 	fmt.Printf("Showing calendar for date: %v / %v\n", date.Month(), date.Year())
