@@ -3,10 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"math"
 	"strconv"
 	"time"
-
-	"github.com/alexeyco/simpletable"
 )
 
 func main() {
@@ -17,31 +16,69 @@ func main() {
 	flag.Parse()
 
 	// if no year and month provided get current date
-	days := daysInMonth(year, month)
+	totalDays := daysInMonth(year, month)
+	date := time.Date(*year, time.Month(*month), 1, 0, 0, 0, 0, time.UTC)
+	startDay := int(date.Weekday())
+	rows := int(math.Ceil(float64(totalDays) / 7))
+	cols := 7
 
-	fmt.Println(days)
+	// Create a 2D slice to represent the table
+	table := make([][]int, rows)
+	counter := 1
+
+	for i := 0; i < rows; i++ {
+		table[i] = make([]int, cols)
+		for j := 0; j < cols; j++ {
+			table[i][j] = counter
+			counter++
+		}
+	}
+
+	fmt.Println(int(startDay))
+
 	fmt.Printf("%v-%v\n", *year, *month)
 
 	head := [...]string{
-		"Poniedziałek",
-		"Wtorek",
-		"Środa",
-		"Czwartek",
-		"Piątek",
-		"Sobota",
-		"Niedziela",
+		"Po",
+		"Wt",
+		"Śr",
+		"Cz",
+		"Pt",
+		"So",
+		"Ni",
 	}
 
-	table := simpletable.New()
+	// table := simpletable.New()
 
-	table.Header = &simpletable.Header{}
+	// table.Header = &simpletable.Header{}
 
 	for _, row := range head {
-		cell := []*simpletable.Cell{{Align: simpletable.AlignCenter, Text: row}}
-		table.Header.Cells = append(table.Header.Cells, cell...)
+		// cell := []*simpletable.Cell{{Align: simpletable.AlignCenter, Text: row}}
+		fmt.Printf("%s ", row)
+		// table.Header.Cells = append(table.Header.Cells, cell...)
 	}
 
-	fmt.Println(table.String())
+	// Print the table
+	for i := 0; i < rows; i++ {
+		fmt.Println(table[i])
+	}
+
+	// day := 1
+	// fmt.Println(totalDays / 7)
+	// for c < totalDays {
+	// 	for day <= 7 {
+
+	// 		//r := []*simpletable.Cell{{Align: simpletable.AlignCenter, Text: fmt.Sprint(day)}}
+	// 		if day >= startDay {
+	// 			fmt.Printf("%v ", day)
+	// 		}
+	// 		//table.Body.Cells = append(table.Body.Cells, r)
+	// 		day++
+	// 	}
+	// }
+
+	//fmt.Println(table.String())
+	//fmt.Println(table.String())
 }
 
 func daysInMonth(m *int, y *int) int {
