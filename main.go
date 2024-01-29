@@ -42,13 +42,13 @@ func main() {
 	counter := 1
 
 	head := [...]string{
-		"Po",
-		"Wt",
-		"Śr",
-		"Cz",
-		"Pt",
-		"So",
-		"Ni",
+		"Mon",
+		"Tue",
+		"Wed",
+		"Thu",
+		"Fri",
+		"Sat",
+		"Sun",
 	}
 
 	table := simpletable.New()
