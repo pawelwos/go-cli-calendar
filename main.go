@@ -21,11 +21,6 @@ func main() {
 
 	var cal = calendar.Create(*year, *month)
 
-	fmt.Println(calendar.GetHead())
-	for _, v := range cal.GetBody() {
-		fmt.Println(v)
-	}
-
 	table := simpletable.New()
 
 	table.Header = &simpletable.Header{}
