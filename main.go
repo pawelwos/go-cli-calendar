@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/alexeyco/simpletable"
-	"github.com/pawelwos/go-calendar"
+	"example.com/calendar-src/calendar"
 )
 
 const (
@@ -32,27 +32,20 @@ func main() {
 
 	var r [][]*simpletable.Cell
 
-	counter := 1
-
-	for i := 0; i < cal.Rows; i++ {
-		var rowCells []*simpletable.Cell // Initialize a new slice for each row
-		for j := 0; j < cal.Cols; j++ {
-			if j < cal.StartDay-1 && i < 1 {
-				rowCells = append(rowCells, &simpletable.Cell{Align: simpletable.AlignCenter, Text: ""})
-			} else if counter > cal.TotalDays {
-				rowCells = append(rowCells, &simpletable.Cell{Align: simpletable.AlignCenter, Text: ""})
-			} else {
-				var text string
-				if cal.Today.Day() == counter && cal.Year == cal.Today.Year() && cal.Month == int(cal.Today.Month()) {
-					text = blue(fmt.Sprint(counter))
+	for _, week := range cal.GetBody() {
+		var rowCells []*simpletable.Cell
+		for _, day := range week {
+			var text string
+			if day != 0 {
+				if cal.Today.Day() == day && cal.Year == cal.Today.Year() && cal.Month == int(cal.Today.Month()) {
+					text = blue(fmt.Sprint(day))
 				} else {
-					text = fmt.Sprint(counter)
+					text = fmt.Sprint(day)
 				}
-				rowCells = append(rowCells, &simpletable.Cell{Align: simpletable.AlignCenter, Text: text})
-				counter++
 			}
+			rowCells = append(rowCells, &simpletable.Cell{Align: simpletable.AlignCenter, Text: text})
 		}
-		r = append(r, rowCells) // Append the row to the outer slice
+		r = append(r, rowCells)
 	}
 
 	table.Body.Cells = append(table.Body.Cells, r...)

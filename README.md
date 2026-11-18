@@ -11,4 +11,4 @@ Example:
 
 Will render a calendar for February 2025
 
-If no argumnts `./main` will display calenar for current month and year :) 
+If no argumnts `./main` will display calenar for current month and year :)
